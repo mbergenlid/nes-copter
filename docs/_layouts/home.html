@@ -1,0 +1,24 @@
+---
+layout: default
+---
+<p>
+As a pet project during the first half of 2017, I wrote a <a href="https://github.com/mbergenlid/rustiness">NES emulator in Rust</a>.
+The emulator is nothing fancy really, it only supports the very basic NES operations but it plays a few games like Donkey Kong, Ice Climber and Ice Hockey.
+The purpose of this project was mainly to learn Rust for which I needed to write something and emulators are cool, so why not?
+However, deep diving into NES internals spiked my interest for writing a game for the NES which I'm going to do now and I also intend to document the process here.
+</p>
+
+<p>
+The game I'm going to create is a version of an old flash game I know as <a href="https://www.youtube.com/watch?v=jWns11JTUe0">Copter</a>. Some people might know it better as <a href="https://www.youtube.com/watch?v=fQoJZuBwrkU">Flappy Bird</a> but it's basically the same thing.
+</p>
+
+<p>
+Let's get started!
+</p>
+
+
+<ol>
+    {% for post in site.posts reversed %}
+    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+</ol>
