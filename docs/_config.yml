@@ -16,7 +16,7 @@
 title: Writing a NES game
 email: marcus.bergenlid@gmail.com
 description: Creating a Copter like game for NES
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/nes-copter" # the subpath of your site, e.g. /blog
 
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
