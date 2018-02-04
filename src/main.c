@@ -12,6 +12,7 @@ Sprite *sprites = (Sprite*)0x200;
 typedef struct _Copter {
     unsigned char velocity;
     unsigned char position;
+    unsigned char crashed;
 } Copter;
 
 Copter copter;
@@ -45,6 +46,7 @@ void updateCopterSprite() {
 char main() {
     copter.velocity = 0;
     copter.position = y;
+    copter.crashed = 0;
 
     PPU.vram.address = 0x3F;
     PPU.vram.address = 0x00;
@@ -70,13 +72,19 @@ char main() {
 }
 
 char tickCount = 0;
+#define GROUND 240
 void nmi() {
-    tickCount += 1;
-    if(tickCount > 2) {
-        tickCount = 0;
-        copter.velocity += 1;
-        copter.position += copter.velocity;
+    if(!copter.crashed) {
+        tickCount += 1;
+        if(tickCount > 2) {
+            tickCount = 0;
+            copter.velocity += 1;
+            copter.position += copter.velocity;
 
-        updateCopterSprite();
+            updateCopterSprite();
+            if(copter.position+8 >= GROUND) {
+                copter.crashed = 1;
+            }
+        }
     }
 }
