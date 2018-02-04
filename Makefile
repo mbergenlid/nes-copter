@@ -10,8 +10,9 @@ ASSEMBLY_OBJECTS=${addprefix target/objects/,${ASSEMBLY_SOURCES:.s=.o}}
 
 all: target/a.nes
 
-copy: src/*.s target/assembly
+copy: src/*.s src/*.inc target/assembly
 	cp src/*.s target/assembly/
+	cp src/*.inc target/assembly/
 
 target/objects/%.o: target/assembly/%.s target/objects
 	${CA} -o $@ -t nes $<
@@ -20,7 +21,7 @@ target/assembly/%.s: src/%.c target/assembly
 	${CC} $< -t nes -O3 -o $@
 
 target/a.nes: copy ${OBJECTS} ${ASSEMBLY_OBJECTS}
-	${LD} -t nes -o target/a.nes ${OBJECTS} nes.lib ${ASSEMBLY_OBJECTS} 
+	${LD} -t nes -o target/a.nes ${OBJECTS} ${ASSEMBLY_OBJECTS} nes.lib
 
 target/assembly:
 	mkdir -p target/assembly
