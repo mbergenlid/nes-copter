@@ -8,7 +8,7 @@
         .export         _exit
         .export         __STARTUP__ : absolute = 1      ; Mark as startup
         .import         initlib, donelib, callmain
-        .import         push0, _main, zerobss, copydata
+        .import         push0, _main, _nmi, zerobss, copydata
         .import         ppubuf_flush
 
         ; Linker generated symbols
@@ -139,7 +139,7 @@ nmi:    pha
         bne     @s
         inc     tickcount+1
 
-@s:     jsr     ppubuf_flush
+@s:     jsr     _nmi
 
         ; Reset the video counter.
         lda     #$20
