@@ -1,5 +1,7 @@
 #include<nes.h>
 
+extern unsigned char read_controller_state();
+
 typedef struct _Sprite {
     unsigned char y_position;
     unsigned char pattern_index;
@@ -10,7 +12,8 @@ typedef struct _Sprite {
 Sprite *sprites = (Sprite*)0x200;
 
 typedef struct _Copter {
-    unsigned char velocity;
+    char acceleration;
+    char velocity;
     unsigned char position;
     unsigned char crashed;
 } Copter;
@@ -44,6 +47,7 @@ void updateCopterSprite() {
 }
 
 char main() {
+    copter.acceleration = 0;
     copter.velocity = 0;
     copter.position = y;
     copter.crashed = 0;
@@ -72,13 +76,20 @@ char main() {
 }
 
 char tickCount = 0;
+unsigned char buttons = 0;
 #define GROUND 240
 void nmi() {
+    read_controller_state();
+    if(buttons & 0x80) {
+        copter.acceleration = -1;
+    } else {
+        copter.acceleration = 1;
+    }
     if(!copter.crashed) {
         tickCount += 1;
         if(tickCount > 2) {
             tickCount = 0;
-            copter.velocity += 1;
+            copter.velocity += copter.acceleration;
             copter.position += copter.velocity;
 
             updateCopterSprite();
