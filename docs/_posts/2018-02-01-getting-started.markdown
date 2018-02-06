@@ -89,4 +89,13 @@ ld65 -t nes -o target/a.nes target/objects/main.o target/objects/test.o nes.lib
 
 It compiles both sources into `.s` files which contain 6502 assembler which are then in turn converted to object files. All object files are then linked into `target/a.nes` which is a ROM in [iNES](http://wiki.nesdev.com/w/index.php/INES) format.
 
-To me, someone who has been spending a lot of time deep diving into NES emulator development, this file looks like a correct iNES ROM file which is promising. But just to be sure it's correct, I loaded it into my own emulator which has a debugger and stepped through the code.and I can see that our code above is in fact running. I won't go into more details on how to run my emulator here, that's a topic for another post, instead I want to get something displayed on the screen.
+To me, someone who has been spending a lot of time deep diving into NES emulator development, this file looks like a correct iNES ROM file which is promising. Looking at the first 16 bytes of it shows:
+
+{% highlight bash %}
+$ head -c 16 target/a.nes |xxd
+00000000: 4e45 531a 0201 0300 0000 0000 0000 0000  NES.............
+{% endhighlight %}
+
+The first four bytes is a the characters "NES" followed by MS-DOS end-of-file character. After that comes the number of 16Kb PRG ROM banks (`2` in this case), this is where our code will end up and these banks will be mapped to address `0x8000-0xFFFF`. Next comes the number of 8Kb CHR ROM banks (`1` in this case). CHR ROM stands for Character ROM and is used for storing sprite and background information. These banks will be mapped to address `0x0000-0x1FFF` in the PPU memory. Then we have a bunch of other information that are not so important right now, you can read the wiki link above for more details.
+
+ But just to be sure it's correct, I loaded it into my own emulator which has a debugger and stepped through the code.and I can see that our code above is in fact running. I won't go into more details on how to run my emulator here, that's a topic for another post, instead I want to get something displayed on the screen.
