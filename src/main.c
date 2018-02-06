@@ -11,6 +11,8 @@ Sprite *sprites = (Sprite*)0x200;
 
 #define x 128
 #define y 120
+#define HORIZONTAL_FLIP 0x40
+#define VERTICAL_FLIP 0x80
 char main() {
     PPU.vram.address = 0x3F;
     PPU.vram.address = 0x00;
@@ -34,17 +36,17 @@ char main() {
     sprites[1].y_position = y-8;
     sprites[1].x_position = x;
     sprites[1].pattern_index = 0;
-    sprites[1].attributes = 0x40;
+    sprites[1].attributes = HORIZONTAL_FLIP;
 
     sprites[2].y_position = y;
     sprites[2].x_position = x-8;
     sprites[2].pattern_index = 0;
-    sprites[2].attributes = 0x80;
+    sprites[2].attributes = VERTICAL_FLIP;
 
     sprites[3].y_position = y;
     sprites[3].x_position = x;
     sprites[3].pattern_index = 0;
-    sprites[3].attributes = 0xC0;
+    sprites[3].attributes = HORIZONTAL_FLIP | VERTICAL_FLIP;
 
     SPRITE_DMA = 0x02;
 
