@@ -141,16 +141,6 @@ nmi:    pha
 
 @s:     jsr     _nmi
 
-        ; Reset the video counter.
-        lda     #$20
-        sta     PPU_VRAM_ADDR2
-        lda     #$00
-        sta     PPU_VRAM_ADDR2
-
-        ; Reset scrolling.
-        sta     PPU_VRAM_ADDR1
-        sta     PPU_VRAM_ADDR1
-
         pla
         tax
         pla
@@ -177,6 +167,11 @@ irq:
 ; ------------------------------------------------------------------------
 
 .segment "CHARS"
-    .res $1000
+    .byte $00,$00,$00,$00,$00,$00,$00,$00
+    .byte $00,$00,$00,$00,$00,$00,$00,$00
+    .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+    .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+    .include "ground.inc"
+    .res $1000-$70
     .include "sprites.inc"
 

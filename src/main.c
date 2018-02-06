@@ -15,6 +15,7 @@ typedef struct _Copter {
     char acceleration;
     char velocity;
     unsigned char position;
+    unsigned char x_position;
     unsigned char crashed;
 } Copter;
 
@@ -50,14 +51,15 @@ char main() {
     copter.acceleration = 0;
     copter.velocity = 0;
     copter.position = y;
+    copter.x_position = 0;
     copter.crashed = 0;
 
     PPU.vram.address = 0x3F;
     PPU.vram.address = 0x00;
     PPU.vram.data = 0x0F;
+    PPU.vram.data = 0x2A;
     PPU.vram.data = 0x0F;
-    PPU.vram.data = 0x0F;
-    PPU.vram.data = 0x0F;
+    PPU.vram.data = 0x2A;
 
     PPU.vram.address = 0x3F;
     PPU.vram.address = 0x11;
@@ -69,15 +71,44 @@ char main() {
     updateCopterSprite();
 
     PPU.control = 0x88;
+
+    PPU.vram.address = 0x22;
+    PPU.vram.address = 0x00;
+    PPU.vram.data = 0x04;
+    PPU.vram.address = 0x22;
+    PPU.vram.address = 0x01;
+    PPU.vram.data = 0x03;
+    PPU.vram.address = 0x21;
+    PPU.vram.address = 0xE2;
+    PPU.vram.data = 0x04;
+    PPU.vram.address = 0x21;
+    PPU.vram.address = 0xE3;
+    PPU.vram.data = 0x03;
+    PPU.vram.address = 0x21;
+    PPU.vram.address = 0xC4;
+    PPU.vram.data = 0x02;
+
     PPU.mask = 0x18;
 
     while(1);
     return 0;
 }
 
+typedef struct _Obstacle {
+    unsigned char top;
+    unsigned char bottom;
+    unsigned char left;
+    unsigned char right;
+} Obstacle;
+
+Obstacle obstacle = {
+    0x10, 48, 128, 128+8
+};
+
 char tickCount = 0;
 unsigned char buttons = 0;
 #define GROUND 240
+#define TOP 0
 void nmi() {
     read_controller_state();
     if(buttons & 0x80) {
@@ -98,4 +129,6 @@ void nmi() {
             }
         }
     }
+    PPU.scroll = 0;
+    PPU.scroll = 0;
 }
