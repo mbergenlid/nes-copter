@@ -6,13 +6,15 @@ date:   2018-02-02 08:01:00 +0100
 
 Rendering to the screen is handled by the Picture Processing Unit (PPU), the PPU has it's own internal memory called VRAM with an address space of 2^16 bytes (same as the CPU memory). Each frame, the PPU draws "whatever" is currently in the PPU memory. The PPU is controlled by a set of registers which are mapped to memory locations in the CPU memory.
 
-That's a pretty vague explanation but let's make it concrete by creating a sprite and draw it on the screen.
+That's a pretty vague explanation but let's make it concrete by creating a sprite and draw it on the screen. I'm thinking to start with displaying the sprite that will represent our helicopter. Given my very artistic skills, I'm not going to attempt an actual helicopter but rather something like this:
 
 ![Sprite]({{ "/assets/sprite.png" | absolute_url }})
-The PPU memory can hold 64 sprites, each occupying 4 bytes
+
+Drawing a sprite on the screen requires three things. A pattern, a colour palette and some meta data, also known as OAM (Object Attribute Memory), such as position. The pattern defines an 8x8 pixel matrix where each value can be `0-3`, these patterns are stored as 16 bytes in two "planes". We will see how this works when we look at an example. Each pixel (values between `0-3`) is used as an index into the colour palette to select the colour for the pixel, each colour palette holds three colours (a pixel value `0` means transparent).
+
 ...
 
-So, the pattern for the image above could look like this
+Our image above is 16x16 pixel so it requires four sprites. Let's start by creating the pattern for the top left sprite, the 8x8 pattern should look something like this.
 
 ```
 0 0 0 0 0 0 0 1
@@ -25,13 +27,13 @@ So, the pattern for the image above could look like this
 1 1 1 1 3 3 3 3
 ```
 
-and the corresponding colour palette:
+together with the corresponding colour palette:
 
 ```
 0 => Transparent
 1 => Green
 2 => Don't care
-3 => Red
+3 => Blue
 ```
 
 Splitting the pattern into the two planes gives
@@ -256,17 +258,17 @@ char main() {
     sprites[1].y_position = y-8;
     sprites[1].x_position = x;
     sprites[1].pattern_index = 0;
-    sprites[1].attributes = 0x40;
+    sprites[1].attributes = HORIZONTAL_FLIP;
 
     sprites[2].y_position = y;
     sprites[2].x_position = x-8;
     sprites[2].pattern_index = 0;
-    sprites[2].attributes = 0x80;
+    sprites[2].attributes = VERTICAL_FLIP;
 
     sprites[3].y_position = y;
     sprites[3].x_position = x;
     sprites[3].pattern_index = 0;
-    sprites[3].attributes = 0xC0;
+    sprites[3].attributes = HORIZONTAL_FLIP | VERTICAL_FLIP;
 
     SPRITE_DMA = 0x02;
 
@@ -278,4 +280,17 @@ char main() {
 }
 {% endhighlight %}
 
+We're defining a struct Sprite representing an OAM entry. An OAM entry is four bytes where the first byte is the `y` position, the second byte is the pattern to be used, the third byte defines some attributes and the fourth byte is the `x` position. The attributes byte is defined as follows:
+```
+76543210
+||||||||
+||||||++- Palette (4 to 7) of sprite
+|||+++--- Unimplemented
+||+------ Priority (0: in front of background; 1: behind background)
+|+------- Flip sprite horizontally
++-------- Flip sprite vertically
+```
 
+The neat thing is that we can actually flip the sprite both horizontally and vertically which means that we can build our sprite which consists of four patterns by using only one actual pattern.
+
+Running this in an emulator should show our sprite in the middle of the screen.
