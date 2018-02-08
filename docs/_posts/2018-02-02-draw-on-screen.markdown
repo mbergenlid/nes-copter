@@ -294,3 +294,4 @@ The neat thing is that we can actually flip a sprite both horizontally and verti
 Running this in an emulator should show our sprite in the middle of the screen. I have tried it in both my own emulator and in Nestopia.
 
 You can check out the code from this step using the git tag `putting-something-on-the-screen`
+Next we're going to make the "helicopter" fall.
